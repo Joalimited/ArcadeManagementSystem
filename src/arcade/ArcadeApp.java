@@ -30,6 +30,7 @@ public class ArcadeApp extends Application
     private ListView<PlaySession> sessionList;
     private ListView<Payment> paymentList;
     private ListView<Membership> membershipList;
+    private ListView<User> employeeList;
 
     public static void main(String[] args)
     {
@@ -101,6 +102,7 @@ public class ArcadeApp extends Application
 
         logoutButton.setOnAction(event ->
         {
+            manager.logoutUser();
             showLoginScreen();
         });
 
@@ -120,6 +122,13 @@ public class ArcadeApp extends Application
 
         tabPane.getTabs().addAll(customerTab, machineTab, sessionTab,
                 paymentTab, membershipTab);
+
+        if(manager.canCurrentUserManageEmployees())
+        {
+            Tab employeeTab = new Tab("Employees", createEmployeePane());
+            employeeTab.setClosable(false);
+            tabPane.getTabs().add(employeeTab);
+        }
 
         VBox layout = new VBox(10, logoutButton, tabPane);
         layout.setPadding(new Insets(10));
@@ -515,6 +524,112 @@ public class ArcadeApp extends Application
         return layout;
     }
 
+    private VBox createEmployeePane()
+    {
+        Label infoLabel = new Label("Role rules: Owners manage everyone. Managers manage Supervisors and Employees. Supervisors manage Employees only.");
+        TextField usernameField = new TextField();
+        PasswordField passwordField = new PasswordField();
+        TextField roleField = new TextField();
+
+        usernameField.setPromptText("Username");
+        passwordField.setPromptText("Password");
+        roleField.setPromptText("Role: Owner, Manager, Supervisor, or Employee");
+
+        Button addButton = new Button("Add Employee");
+        Button updateRoleButton = new Button("Update Selected Position");
+        Button deleteButton = new Button("Delete Selected Employee");
+
+        employeeList = new ListView<User>();
+        refreshEmployeeList();
+
+        addButton.setOnAction(event ->
+        {
+            boolean added = manager.addEmployee(usernameField.getText(),
+                    passwordField.getText(), roleField.getText());
+
+            if(added)
+            {
+                refreshEmployeeList();
+                clear(usernameField, passwordField, roleField);
+                showAlert("Employee Added", "The employee account was added.");
+            }
+            else
+            {
+                showAlert("Input Error",
+                        "Use a unique username and a role you are allowed to manage.");
+            }
+        });
+
+        updateRoleButton.setOnAction(event ->
+        {
+            User selected = employeeList.getSelectionModel().getSelectedItem();
+
+            if(selected != null)
+            {
+                boolean updated = manager.updateEmployeeRole(
+                        selected.getUserId(), roleField.getText());
+
+                if(updated)
+                {
+                    refreshEmployeeList();
+                    clear(roleField);
+                    showAlert("Position Updated",
+                            "The employee position was updated.");
+                }
+                else
+                {
+                    showAlert("Permission Error",
+                            "You are not allowed to update that position.");
+                }
+            }
+            else
+            {
+                showAlert("Update Error", "Select an employee first.");
+            }
+        });
+
+        deleteButton.setOnAction(event ->
+        {
+            User selected = employeeList.getSelectionModel().getSelectedItem();
+
+            if(selected != null)
+            {
+                boolean deleted = manager.deleteEmployee(selected.getUserId());
+
+                if(deleted)
+                {
+                    refreshEmployeeList();
+                }
+                else
+                {
+                    showAlert("Permission Error",
+                            "You are not allowed to remove that role.");
+                }
+            }
+            else
+            {
+                showAlert("Delete Error", "Select an employee first.");
+            }
+        });
+
+        employeeList.setOnMouseClicked(event ->
+        {
+            User selected = employeeList.getSelectionModel().getSelectedItem();
+
+            if(selected != null)
+            {
+                usernameField.setText(selected.getEmail());
+                roleField.setText(selected.getRole());
+            }
+        });
+
+        VBox layout = new VBox(10, infoLabel, usernameField, passwordField,
+                roleField, addButton, updateRoleButton, deleteButton,
+                employeeList);
+        layout.setPadding(new Insets(15));
+        return layout;
+    }
+
     private void refreshCustomerList()
     {
         customerList.setItems(FXCollections.observableArrayList(
@@ -543,6 +658,12 @@ public class ArcadeApp extends Application
     {
         membershipList.setItems(FXCollections.observableArrayList(
                 manager.getMemberships()));
+    }
+
+    private void refreshEmployeeList()
+    {
+        employeeList.setItems(FXCollections.observableArrayList(
+                manager.getUsers()));
     }
 
     private void clear(TextField... fields)

@@ -1,3 +1,6 @@
 1,joshm05.greenberg@gmail.com,7654,Employee
 2,logan@cooldude.man,orrfpdl,Employee
-3,joshman22,87654,Employee
+3,joshman22,87654,Manager
+4,owner,654uhqzr,Owner
+5,manager,654uhjdqdp,Manager
+6,supervisor,654urvlyuhsxv,Supervisor

@@ -13,6 +13,7 @@ public class ArcadeManager implements Manageable {
     private ArrayList<PlaySession> sessions;
     private ArrayList<Payment> payments;
     private ArrayList<User> users;
+    private User currentUser;
 
     public ArcadeManager() {
         customers = new ArrayList<Customer>();
@@ -21,6 +22,7 @@ public class ArcadeManager implements Manageable {
         sessions = new ArrayList<PlaySession>();
         payments = new ArrayList<Payment>();
         users = new ArrayList<User>();
+        currentUser = null;
         loadAllData();
     }
 
@@ -46,6 +48,171 @@ public class ArcadeManager implements Manageable {
         for (String line : FileManager.readLines("users.txt")) {
             users.add(User.fromFileString(line));
         }
+
+        createDefaultAccountsIfNeeded();
+    }
+
+    private void createDefaultAccountsIfNeeded() {
+        boolean hasOwner = false;
+        boolean hasManager = false;
+        boolean hasSupervisor = false;
+
+        for (User user : users) {
+            if (user.getEmail().equalsIgnoreCase("owner")) {
+                hasOwner = true;
+            }
+
+            if (user.getEmail().equalsIgnoreCase("manager")) {
+                hasManager = true;
+            }
+
+            if (user.getEmail().equalsIgnoreCase("supervisor")) {
+                hasSupervisor = true;
+            }
+        }
+
+        if (!hasOwner) {
+            users.add(new User(getNextUserId(), "owner",
+                    EncryptionUtil.encrypt("owner123"), "Owner"));
+        }
+
+        if (!hasManager) {
+            users.add(new User(getNextUserId(), "manager",
+                    EncryptionUtil.encrypt("manager123"), "Manager"));
+        }
+
+        if (!hasSupervisor) {
+            users.add(new User(getNextUserId(), "supervisor",
+                    EncryptionUtil.encrypt("supervisor123"), "Supervisor"));
+        }
+
+        if (!hasOwner || !hasManager || !hasSupervisor) {
+            saveUsers();
+        }
+    }
+
+    private String formatRole(String role) {
+        if (role == null) {
+            return "";
+        }
+
+        if (role.equalsIgnoreCase("Owner")) {
+            return "Owner";
+        }
+        else if (role.equalsIgnoreCase("Manager")) {
+            return "Manager";
+        }
+        else if (role.equalsIgnoreCase("Supervisor")) {
+            return "Supervisor";
+        }
+        else if (role.equalsIgnoreCase("Employee")) {
+            return "Employee";
+        }
+
+        return "";
+    }
+
+    public boolean canCurrentUserManageRole(String targetRole) {
+        if (currentUser == null) {
+            return false;
+        }
+
+        String currentRole = currentUser.getRole();
+        String formattedTargetRole = formatRole(targetRole);
+
+        if (formattedTargetRole.isEmpty()) {
+            return false;
+        }
+
+        if (currentRole.equalsIgnoreCase("Owner")) {
+            return true;
+        }
+        else if (currentRole.equalsIgnoreCase("Manager")) {
+            return formattedTargetRole.equalsIgnoreCase("Supervisor")
+                    || formattedTargetRole.equalsIgnoreCase("Employee");
+        }
+        else if (currentRole.equalsIgnoreCase("Supervisor")) {
+            return formattedTargetRole.equalsIgnoreCase("Employee");
+        }
+
+        return false;
+    }
+
+    public boolean addEmployee(String username, String password, String role) {
+        if (username.isBlank() || password.isBlank() || role.isBlank()) {
+            return false;
+        }
+
+        String formattedRole = formatRole(role);
+
+        if (formattedRole.isEmpty()) {
+            return false;
+        }
+
+        if (!canCurrentUserManageRole(formattedRole)) {
+            return false;
+        }
+
+        for (User user : users) {
+            if (user.getEmail().equalsIgnoreCase(username)) {
+                return false;
+            }
+        }
+
+        users.add(new User(getNextUserId(), username,
+                EncryptionUtil.encrypt(password), formattedRole));
+        saveUsers();
+        return true;
+    }
+
+
+    public boolean updateEmployeeRole(int userId, String newRole) {
+        String formattedRole = formatRole(newRole);
+
+        if (formattedRole.isEmpty()) {
+            return false;
+        }
+
+        if (!canCurrentUserManageRole(formattedRole)) {
+            return false;
+        }
+
+        for (User user : users) {
+            if (user.getUserId() == userId) {
+                if (!canCurrentUserManageRole(user.getRole())) {
+                    return false;
+                }
+
+                user.setRole(formattedRole);
+                saveUsers();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean deleteEmployee(int userId) {
+        for (User user : users) {
+            if (user.getUserId() == userId) {
+                if (!canCurrentUserManageRole(user.getRole())) {
+                    return false;
+                }
+
+                users.remove(user);
+                saveUsers();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean canCurrentUserManageEmployees() {
+        return currentUser != null
+                && (currentUser.getRole().equalsIgnoreCase("Owner")
+                || currentUser.getRole().equalsIgnoreCase("Manager")
+                || currentUser.getRole().equalsIgnoreCase("Supervisor"));
     }
 
     private void saveUsers() {
@@ -162,11 +329,21 @@ public class ArcadeManager implements Manageable {
         for (User user : users) {
             if (user.getEmail().equalsIgnoreCase(email)
                     && user.getEncryptedPassword().equals(encrypted)) {
+                currentUser = user;
                 return true;
             }
         }
 
+        currentUser = null;
         return false;
+    }
+
+    public void logoutUser() {
+        currentUser = null;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 
     private int getNextUserId() {
@@ -342,6 +519,10 @@ public class ArcadeManager implements Manageable {
 
     public ArrayList<Payment> getPayments() {
         return payments;
+    }
+
+    public ArrayList<User> getUsers() {
+        return users;
     }
 
     public boolean isValidCustomerId(int id) {
