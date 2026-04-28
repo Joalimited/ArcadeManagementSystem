@@ -1,0 +1,7 @@
+Command-line JavaFX run example:
+
+javac --module-path /path/to/javafx/lib --add-modules javafx.controls -d out src/arcade/*.java
+
+java --module-path /path/to/javafx/lib --add-modules javafx.controls -cp out arcade.ArcadeApp
+
+Replace /path/to/javafx/lib with your JavaFX lib folder.

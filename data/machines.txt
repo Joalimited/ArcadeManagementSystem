@@ -1,0 +1,6 @@
+2001,Pac-Man,Classic,Working,1.0
+2002,Street Fighter,Fighting,Working,1.5
+2003,Mario Kart,Racing,Maintenance,2.0
+2004,Claw Machine,slave,Working,1.25
+2005,Dick and balls,Classic,Working,1.25
+2006,Manny,Classic,Working,4.0
