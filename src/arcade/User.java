@@ -56,6 +56,11 @@ public class User
         return role;
     }
 
+    public void setRole(String role)
+    {
+        this.role = role;
+    }
+
     public String toFileString()
     {
         return userId + "," + email + "," + encryptedPassword + "," + role;
