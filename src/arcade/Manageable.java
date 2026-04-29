@@ -2,7 +2,6 @@ package arcade;
 
 /**
  * Manageable.java
- * Interface used by manager classes that support CRUD operations.
  */
 public interface Manageable
 {

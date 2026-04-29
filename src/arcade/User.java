@@ -2,7 +2,6 @@ package arcade;
 
 /**
  * User.java
- * Stores login account information.
  */
 public class User
 {

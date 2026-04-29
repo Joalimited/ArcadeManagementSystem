@@ -2,8 +2,7 @@ package arcade;
 
 /**
  * Person.java
- * Abstract parent class for people in the arcade system.
- */
+ * */
 public abstract class Person
 {
     protected int id;

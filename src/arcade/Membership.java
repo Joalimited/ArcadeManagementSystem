@@ -2,7 +2,6 @@ package arcade;
 
 /**
  * Membership.java
- * Stores customer membership data.
  */
 public class Membership
 {
@@ -79,6 +78,6 @@ public class Membership
     public String toString()
     {
         return membershipId + " - Customer " + customerId + " | "
-               + membershipType + " | Points: " + points;
+               + membershipType + " | Discount: " + discountRate;
     }
 }

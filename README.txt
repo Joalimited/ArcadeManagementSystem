@@ -6,7 +6,7 @@ Arcade business management system.
 Summary:
 This JavaFX project allows users to register, log in, and manage arcade
 records. The system supports customers, arcade machines, play sessions,
-memberships, and payments.
+memberships, and payments and an employee management system.
 
 Main Features:
 - Register and login system
@@ -17,6 +17,7 @@ Main Features:
   check boxes, VBox, and GridPane
 - File handling using text files
 - ArrayLists for record storage
+- Employee management system
 - Try-catch and if-statement validation
 
 Class Design:
@@ -61,6 +62,6 @@ Data is saved in the data folder:
 
 How to Run:
 1. Open the folder in an IDE that supports JavaFX.
-2. Make sure JavaFX is installed and added to the project libraries.
+2. Make sure you have JavaFX installed and added to the project libraries.
 3. Run arcade.ArcadeApp.
 4. Register a user first, then log in.

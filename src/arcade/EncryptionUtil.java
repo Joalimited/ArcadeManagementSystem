@@ -2,7 +2,6 @@ package arcade;
 
 /**
  * EncryptionUtil.java
- * Uses simple reverse and Caesar-style shifting for passwords.
  */
 public class EncryptionUtil
 {
