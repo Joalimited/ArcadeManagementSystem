@@ -108,11 +108,11 @@ public class ArcadeApp extends Application
 
         TabPane tabPane = new TabPane();
 
-        Tab customerTab = new Tab("Customers", createCustomerPane());
-        Tab machineTab = new Tab("Machines", createMachinePane());
-        Tab sessionTab = new Tab("Play Sessions", createSessionPane());
-        Tab paymentTab = new Tab("Payments", createPaymentPane());
-        Tab membershipTab = new Tab("Memberships", createMembershipPane());
+        Tab customerTab = new Tab("Customers", createCustomerPanel());
+        Tab machineTab = new Tab("Machines", createMachinePanel());
+        Tab sessionTab = new Tab("Play Sessions", createSessionPanel());
+        Tab paymentTab = new Tab("Payments", createPaymentPanel());
+        Tab membershipTab = new Tab("Memberships", createMembershipPanel());
 
         customerTab.setClosable(false);
         machineTab.setClosable(false);
@@ -123,9 +123,9 @@ public class ArcadeApp extends Application
         tabPane.getTabs().addAll(customerTab, machineTab, sessionTab,
                 paymentTab, membershipTab);
 
-        if(manager.canCurrentUserManageEmployees())
+        if(manager.EmployeeManage())
         {
-            Tab employeeTab = new Tab("Employees", createEmployeePane());
+            Tab employeeTab = new Tab("Employees", createEmployeePanel());
             employeeTab.setClosable(false);
             tabPane.getTabs().add(employeeTab);
         }
@@ -137,7 +137,7 @@ public class ArcadeApp extends Application
         mainStage.setTitle("Arcade Management System");
         mainStage.setScene(scene);
     }
-    private VBox createCustomerPane()
+    private VBox createCustomerPanel()
     {
         TextField firstNameField = new TextField();
         TextField lastNameField = new TextField();
@@ -294,7 +294,7 @@ public class ArcadeApp extends Application
         return layout;
     }
 
-    private VBox createMachinePane()
+    private VBox createMachinePanel()
     {
         TextField nameField = new TextField();
         TextField typeField = new TextField();
@@ -406,7 +406,7 @@ public class ArcadeApp extends Application
         return layout;
     }
 
-    private VBox createSessionPane()
+    private VBox createSessionPanel()
     {
         TextField customerIdField = new TextField();
         TextField machineIdField = new TextField();
@@ -466,7 +466,7 @@ public class ArcadeApp extends Application
         return layout;
     }
 
-    private VBox createPaymentPane()
+    private VBox createPaymentPanel()
     {
         TextField customerIdField = new TextField();
         TextField amountField = new TextField();
@@ -507,7 +507,7 @@ public class ArcadeApp extends Application
         return layout;
     }
 
-    private VBox createMembershipPane()
+    private VBox createMembershipPanel()
     {
         TextField customerIdField = new TextField();
         TextField typeField = new TextField();
@@ -556,7 +556,7 @@ public class ArcadeApp extends Application
         return layout;
     }
 
-    private VBox createEmployeePane()
+    private VBox createEmployeePanel()
     {
         Label infoLabel = new Label("Role rules: Owners manage everyone. Managers manage Supervisors and Employees. Supervisors manage Employees only.");
         TextField usernameField = new TextField();

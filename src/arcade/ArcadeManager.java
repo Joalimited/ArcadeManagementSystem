@@ -208,7 +208,7 @@ public class ArcadeManager implements Manageable {
         return false;
     }
 
-    public boolean canCurrentUserManageEmployees() {
+    public boolean EmployeeManage() {
         return currentUser != null
                 && (currentUser.getRole().equalsIgnoreCase("Owner")
                 || currentUser.getRole().equalsIgnoreCase("Manager")
