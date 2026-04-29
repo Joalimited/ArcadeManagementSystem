@@ -8,7 +8,6 @@ import java.util.Scanner;
 
 /**
  * FileManager.java
- * Handles loading and saving data files.
  */
 public class FileManager
 {

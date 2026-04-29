@@ -2,7 +2,6 @@ package arcade;
 
 /**
  * Customer.java
- * Stores customer data.
  */
 public class Customer extends Person
 {

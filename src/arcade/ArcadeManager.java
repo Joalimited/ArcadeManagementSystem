@@ -535,6 +535,16 @@ public class ArcadeManager implements Manageable {
         return false;
     }
 
+    public boolean isValidMembershipId(int id) {
+        for (Membership membership : memberships) {
+            if (membership.getMembershipId() == id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean isValidMachineId(int id) {
         for (ArcadeMachine machine : machines) {
             if (machine.getMachineId() == id) {

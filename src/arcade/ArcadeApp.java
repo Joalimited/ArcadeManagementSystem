@@ -166,7 +166,19 @@ public class ArcadeApp extends Application
             try
             {
                 int id = manager.getNextCustomerId();
-                int membershipId = Integer.parseInt(membershipField.getText());
+                int membershipId = 0;
+
+                if(!membershipField.getText().isBlank())
+                {
+                    membershipId = Integer.parseInt(membershipField.getText());
+
+                    if(!manager.isValidMembershipId(membershipId))
+                    {
+                        showAlert("Invalid Membership ID",
+                                "Membership ID does not exist.");
+                        return;
+                    }
+                }
 
                 Customer customer = new Customer(id, firstNameField.getText(),
                         lastNameField.getText(), phoneField.getText(),
@@ -192,10 +204,24 @@ public class ArcadeApp extends Application
             {
                 try
                 {
+                    int membershipId = 0;
+
+                    if(!membershipField.getText().isBlank())
+                    {
+                        membershipId = Integer.parseInt(membershipField.getText());
+
+                        if(!manager.isValidMembershipId(membershipId))
+                        {
+                            showAlert("Invalid Membership ID",
+                                    "Membership ID does not exist.");
+                            return;
+                        }
+                    }
+
                     Customer updated = new Customer(selected.getId(),
                             firstNameField.getText(), lastNameField.getText(),
                             phoneField.getText(), emailField.getText(),
-                            Integer.parseInt(membershipField.getText()));
+                            membershipId);
 
                     manager.updateRecord(selected.getId(), updated);
                     refreshCustomerList();
@@ -485,12 +511,10 @@ public class ArcadeApp extends Application
     {
         TextField customerIdField = new TextField();
         TextField typeField = new TextField();
-        TextField pointsField = new TextField();
         TextField discountField = new TextField();
 
         customerIdField.setPromptText("Customer ID");
         typeField.setPromptText("Basic/Gold/VIP");
-        pointsField.setPromptText("Points");
         discountField.setPromptText("Discount Rate");
 
         Button addButton = new Button("Add Membership");
@@ -501,16 +525,24 @@ public class ArcadeApp extends Application
         {
             try
             {
+                int customerId = Integer.parseInt(customerIdField.getText());
+
+                if(!manager.isValidCustomerId(customerId))
+                {
+                    showAlert("Invalid Customer ID",
+                            "Customer ID does not exist.");
+                    return;
+                }
                 Membership membership = new Membership(
                         manager.getNextMembershipId(),
                         Integer.parseInt(customerIdField.getText()),
                         typeField.getText(),
-                        Integer.parseInt(pointsField.getText()),
+                        0,
                         Double.parseDouble(discountField.getText()));
 
                 manager.addRecord(membership);
                 refreshMembershipList();
-                clear(customerIdField, typeField, pointsField, discountField);
+                clear(customerIdField, typeField, discountField);
             }
             catch(Exception e)
             {
@@ -518,7 +550,7 @@ public class ArcadeApp extends Application
             }
         });
 
-        VBox layout = new VBox(10, customerIdField, typeField, pointsField,
+        VBox layout = new VBox(10, customerIdField, typeField,
                 discountField, addButton, membershipList);
         layout.setPadding(new Insets(15));
         return layout;

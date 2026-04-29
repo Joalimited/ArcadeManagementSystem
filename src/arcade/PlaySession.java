@@ -2,7 +2,6 @@ package arcade;
 
 /**
  * PlaySession.java
- * Stores play session records.
  */
 public class PlaySession
 {

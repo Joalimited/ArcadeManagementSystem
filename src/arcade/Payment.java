@@ -2,7 +2,6 @@ package arcade;
 
 /**
  * Payment.java
- * Stores payment records.
  */
 public class Payment
 {
